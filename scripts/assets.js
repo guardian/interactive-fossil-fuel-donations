@@ -8,6 +8,7 @@ var rollup = require('rollup');
 var resolve = require('rollup-plugin-node-resolve');
 var terser = require('rollup-plugin-terser').terser;
 var commonjs = require('rollup-plugin-commonjs');
+var json = require('rollup-plugin-json');
 var deploy = require('./deploy.js');
 
 module.exports = {
@@ -19,6 +20,7 @@ module.exports = {
             let rollupOptions = {
                 input: './src/js/' + fileName + '.js',
                 plugins: [
+                    json(),
                     resolve(),
                     commonjs({
                         namedExports: {

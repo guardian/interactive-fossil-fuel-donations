@@ -65,5 +65,8 @@ module.exports = function getData(config) {
 
     data = appendConfigDrivenData(config);
 
+    fs.mkdirsSync('./.data');
+    fs.writeFileSync('./.data/candidates.json', JSON.stringify(data));
+
     return data;
 };

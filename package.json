@@ -14,7 +14,7 @@
     },
     "config": {
         "data": {
-            "id": ""
+            "id": "1bfaFVviRqzjOWTzpz3_LG8HenvAuXw00varj0xAyDd0"
         },
         "local": {
             "url": "http://localhost",
@@ -41,6 +41,7 @@
         "aws-sdk": "^2.5.0",
         "browser-sync": "^2.24.6",
         "browser-sync-reuse-tab": "^1.0.3",
+        "d3": "^5.9.2",
         "deasync": "^0.1.9",
         "emojic": "^1.1.14",
         "filesize": "^3.3.0",
@@ -57,6 +58,7 @@
         "node-watch": "^0.4.0",
         "rollup": "^0.67.3",
         "rollup-plugin-commonjs": "^9.2.0",
+        "rollup-plugin-json": "^4.0.0",
         "rollup-plugin-node-resolve": "^3.4.0",
         "rollup-plugin-terser": "^4.0.4",
         "sass-mq": "^5.0.0",
