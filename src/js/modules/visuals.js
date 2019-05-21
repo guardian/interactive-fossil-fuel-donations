@@ -10,9 +10,20 @@ let width,
 
 export default {
     init: function() {
+        this.loadImages();
         this.bindings();
         this.sortData();
         this.setupCanvas();
+    },
+
+    loadImages: function() {
+        data.forEach(function(d) {
+            let image = new Image();
+                image.src = '/assets/' + this.handlise(d.candidate) + '.png';
+                image.onload = function() {
+                    d.image = image;
+                }.bind(this);
+        }.bind(this));
     },
 
     bindings: function() {
@@ -23,7 +34,9 @@ export default {
 
     sortData: function() {
         data.sort(function(a, b) {
-            return a.candidate - b.candidate;
+            var textA = a.candidate.toUpperCase();
+            var textB = b.candidate.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
     },
 
@@ -68,7 +81,7 @@ export default {
                 levels.push({
                     id: data[i].candidate,
                     parentId: data[i].pledged ? 'true' : 'false',
-                    value: 1
+                    value: radius * 2
                 });
             }
 
@@ -116,11 +129,14 @@ export default {
     },
 
     animate: function(positionedData) {
-        positionedData.sort(function(a,b) {
-            return a.id - b.id;
+        positionedData.sort(function(a, b) {
+            var textA = a.id.toUpperCase();
+            var textB = b.id.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
 
         data.forEach(function(candidate, i) {
+            candidate.fill = candidate.pledged ? 'rgb(0, 132, 198)' : 'rgb(199, 0, 0)';
             candidate.sx = candidate.x || width / 2;
             candidate.sy = candidate.y || height / 2;
             candidate.sr = candidate.r || radius;
@@ -144,6 +160,7 @@ export default {
             });
 
             this.draw();
+
             if (t === 1) {
                 timer.stop();
             }
@@ -155,13 +172,31 @@ export default {
         ctx.save();
 
         data.forEach(function(d) {
-            ctx.fillStyle = 'rgb(199, 0, 0)';
+            ctx.fillStyle = d.fill;
             ctx.beginPath();
             ctx.moveTo(d.x + d.r, d.y);
-            ctx.arc(d.x, d.y, d.r, 0, 2 * Math.PI);
+            ctx.arc(d.x, d.y, d.r, 0, 2 * Math.PI, true);
             ctx.fill();
+
+            if (d.image) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.r, 0, 2 * Math.PI, true);
+                ctx.closePath();
+                ctx.clip();
+
+                ctx.drawImage(d.image, d.x - d.r, d.y - d.r, d.r * 2, d.r * 2);
+                ctx.restore();
+            }
+
         }.bind(this));
 
         ctx.restore();
+    },
+
+    handlise: function(string) {
+        if (string) {
+            return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ /g, '-').replace('\'', '').toLowerCase();
+        }
     }
 };
