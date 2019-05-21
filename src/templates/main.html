@@ -1,12 +1,13 @@
 <div class='uit'>
-    {{> partials/header }}
-    {{> partials/body }}
-
     <div class='uit-container'>
-        {{> partials/ad id=(adId) banner=true }}
+        <div class='uit-visuals'>
+            <h1>this is where the graphic goes</h1>
+        </div>
+        <div class='uit-article'>
+            {{> partials/header }}
+            {{> partials/body }}
+        </div>
     </div>
-
-    {{> partials/related }}
 </div>
 
 <script async src='{{ path }}/app.js'></script>

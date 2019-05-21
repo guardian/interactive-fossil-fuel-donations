@@ -1,0 +1,23 @@
+.uit-visuals {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+
+    @include mq(desktop) {
+        left: auto;
+        right: auto;
+        margin-left: -20px;
+        width: calc(980px / 2);
+    }
+
+    @include mq(leftCol) {
+        width: calc(1140px / 2);
+    }
+
+    @include mq(wide) {
+        width: calc(1300px / 2);
+    }
+}
