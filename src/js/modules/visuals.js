@@ -61,43 +61,62 @@ export default {
         let positions;
 
         if (activeSlide === 0) {
-            let levels = [];
-            levels.push({
-                id: 'pledged',
+            let levels = {};
+
+            levels.true = [];
+            levels.true.push({
+                id: 'true',
                 parentId: null
             });
 
-            levels.push({
-                id: 'true',
-                parentId: 'pledged'
-            });
-
-            levels.push({
+            levels.false = [];
+            levels.false.push({
                 id: 'false',
-                parentId: 'pledged'
+                parentId: null
             });
 
             for (var i in data) {
-                levels.push({
+                const pledged = data[i].pledged ? 'true' : 'false';
+                levels[pledged].push({
                     id: data[i].candidate,
-                    parentId: data[i].pledged ? 'true' : 'false',
+                    parentId: pledged,
                     value: radius * 2
                 });
             }
 
-            let root = d3.stratify()
-                (levels)
+            let rootTrue = d3.stratify()
+                (levels.true)
                 .sum(function(d) { return d.value })
                 .sort(function(a, b) { return b.value - a.value });
 
-            let pack = d3.pack()
-                .size([width, height - 100])
+            let rootFalse = d3.stratify()
+                (levels.false)
+                .sum(function(d) { return d.value })
+                .sort(function(a, b) { return b.value - a.value });
+
+            let packTrue = d3.pack()
+                .size([width, height / 1.5])
                 .radius(function(d) { return radius; })
-                .padding(function(d) { return 4; });
+                .padding(function(d) { return 20; });
 
-            let packed = pack(root);
+            let packFalse = d3.pack()
+                .size([width, height / 1.5])
+                .radius(function(d) { return radius; })
+                .padding(function(d) { return 20; });
 
-            this.animate(packed.leaves());
+            let packedTrue = packTrue(rootTrue);
+            let packedFalse = packTrue(rootFalse);
+
+            let leaves = packedTrue.leaves();
+                leaves = leaves.concat(packedFalse.leaves());
+
+            for (var i in leaves) {
+                if (leaves[i].data.parentId === 'false') {
+                    leaves[i].y += height / 3;
+                }
+            }
+
+            this.animate(leaves);
         } else if (activeSlide === 1) {
             let levels = [];
             levels.push({
