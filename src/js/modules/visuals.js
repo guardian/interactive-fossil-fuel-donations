@@ -200,7 +200,7 @@ export default {
                 candidate.y = candidate.sy * (1 - t) + candidate.ty * t;
                 candidate.r = candidate.sr * (1 - t) + candidate.tr * t;
                 candidate.o = candidate.so * (1 - t) + candidate.to * t;
-                candidate.fill = candidate.pledged ? `rgba(0, 132, 198, ${candidate.o})` : `rgba(199, 0, 0, ${candidate.o})`
+                candidate.fill = candidate.pledged ? `rgba(61, 181, 64, ${candidate.o})` : `rgba(199, 0, 0, ${candidate.o})`
             });
 
             this.draw();
