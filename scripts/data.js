@@ -37,6 +37,14 @@ function sortResults() {
     return data;
 }
 
+function addSurnames() {
+    for (var i in data) {
+        data[i].surname = data[i].candidate.substr(data[i].candidate.indexOf(' ') + 1);
+    }
+
+    return data;
+}
+
 function appendConfigDrivenData(config) {
     data.path = config.absolutePath
     data.isLocal = !config.specs.deploy;
@@ -53,6 +61,7 @@ module.exports = function getData(config) {
         fetchData(config.data.id, function(result) {
             data = result;
             data = sortResults();
+            data = addSurnames();
             // call additional data cleaning functions here
 
             isDone = true;

@@ -94,18 +94,13 @@ export default {
                 .sum(function(d) { return d.value })
                 .sort(function(a, b) { return b.value - a.value });
 
-            let packTrue = d3.pack()
+            let pack = d3.pack()
                 .size([width, height / 1.5])
                 .radius(function(d) { return radius; })
-                .padding(function(d) { return 20; });
+                .padding(function(d) { return 30; });
 
-            let packFalse = d3.pack()
-                .size([width, height / 1.5])
-                .radius(function(d) { return radius; })
-                .padding(function(d) { return 20; });
-
-            let packedTrue = packTrue(rootTrue);
-            let packedFalse = packTrue(rootFalse);
+            let packedTrue = pack(rootTrue);
+            let packedFalse = pack(rootFalse);
 
             let leaves = packedTrue.leaves();
                 leaves = leaves.concat(packedFalse.leaves());
@@ -118,32 +113,61 @@ export default {
 
             this.animate(leaves);
         } else if (activeSlide === 1) {
-            let levels = [];
-            levels.push({
-                id: 'candidates',
+            let levels = {};
+            levels.true = [];
+            levels.true.push({
+                id: 'true',
+                parentId: null
+            });
+
+            levels.false = [];
+            levels.false.push({
+                id: 'false',
                 parentId: null
             });
 
             for (var i in data) {
-                levels.push({
+                const received = data[i].total ? 'true' : 'false';
+                levels[received].push({
                     id: data[i].candidate,
-                    parentId: 'candidates',
-                    value: data[i].total || 0
+                    parentId: received,
+                    value: data[i].total || radius * 2
                 });
             }
 
-            let root = d3.stratify()
-                (levels)
+            let rootTrue = d3.stratify()
+                (levels.true)
                 .sum(function(d) { return d.value })
                 .sort(function(a, b) { return b.value - a.value });
 
-            let pack = d3.pack()
-                .size([width, height - 100])
-                .padding(function(d) { return 4; });
+            let rootFalse = d3.stratify()
+                (levels.false)
+                .sum(function(d) { return d.value })
+                .sort(function(a, b) { return b.value - a.value });
 
-            let packed = pack(root);
+            let packTrue = d3.pack()
+                .size([width, height / 1.5])
+                .padding(function(d) { return 30; });
 
-            this.animate(packed.leaves());
+            let packFalse = d3.pack()
+                .size([width, height / 3])
+                .radius(function(d) { return radius; })
+                .padding(function(d) { return 30; });
+
+            let packedTrue = packTrue(rootTrue);
+            let packedFalse = packFalse(rootFalse);
+
+            let leaves = packedTrue.leaves();
+                leaves = leaves.concat(packedFalse.leaves());
+
+            for (var i in leaves) {
+                if (leaves[i].data.parentId === 'false') {
+                    leaves[i].y += height / 1.5;
+                    leaves[i].o = 0.3;
+                }
+            }
+
+            this.animate(leaves);
         }
     },
 
@@ -155,7 +179,6 @@ export default {
         });
 
         data.forEach(function(candidate, i) {
-            candidate.fill = candidate.pledged ? 'rgb(0, 132, 198)' : 'rgb(199, 0, 0)';
             candidate.sx = candidate.x || width / 2;
             candidate.sy = candidate.y || height / 2;
             candidate.sr = candidate.r || radius;
@@ -163,7 +186,7 @@ export default {
             candidate.tx = positionedData[i].x;
             candidate.ty = positionedData[i].y;
             candidate.tr = positionedData[i].r || radius;
-            candidate.to = 1;
+            candidate.to = positionedData[i].o || 1;
         }.bind(this));
 
         if (timer !== undefined) {
@@ -176,6 +199,8 @@ export default {
                 candidate.x = candidate.sx * (1 - t) + candidate.tx * t;
                 candidate.y = candidate.sy * (1 - t) + candidate.ty * t;
                 candidate.r = candidate.sr * (1 - t) + candidate.tr * t;
+                candidate.o = candidate.so * (1 - t) + candidate.to * t;
+                candidate.fill = candidate.pledged ? `rgba(0, 132, 198, ${candidate.o})` : `rgba(199, 0, 0, ${candidate.o})`
             });
 
             this.draw();
@@ -203,10 +228,16 @@ export default {
                 ctx.arc(d.x, d.y, d.r, 0, 2 * Math.PI, true);
                 ctx.closePath();
                 ctx.clip();
+                ctx.globalAlpha = d.o;
 
                 ctx.drawImage(d.image, d.x - d.r, d.y - d.r, d.r * 2, d.r * 2);
                 ctx.restore();
             }
+
+            ctx.fillStyle = '#222';
+            ctx.font = '14px Guardian Sans Web';
+            ctx.textAlign = 'center';
+            ctx.fillText(d.surname, d.x, d.y + d.r + 15);
 
         }.bind(this));
 
