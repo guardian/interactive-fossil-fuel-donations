@@ -60,7 +60,40 @@ export default {
         let activeSlide = parseInt($('.uit-visuals').attr('data-set'));
         let positions;
 
-        if (activeSlide === 1) {
+        if (activeSlide === 0) {
+            let levels = [];
+                levels.push({
+                    id: 'parent',
+                    parentId: null
+                });
+
+            for (var i in data) {
+                levels.push({
+                    id: data[i].candidate,
+                    parentId: 'parent',
+                    value: radius * 2
+                });
+            }
+
+            let root = d3.stratify()
+                (levels)
+                .sum(function(d) { return d.value })
+                .sort(function(a, b) { return b.value - a.value });
+
+            let pack = d3.pack()
+                .size([width, height])
+                .radius(function(d) { return radius })
+                .padding(function(d) { return 30 });
+
+            const packed = pack(root);
+            let leaves = packed.leaves();
+
+            for (var i in leaves) {
+                leaves[i].color = [32, 32, 32];
+            }
+
+            this.animate(leaves);
+        } else if (activeSlide === 1) {
             let levels = {};
 
             levels.true = [];
@@ -183,10 +216,17 @@ export default {
             candidate.sy = candidate.y || height / 2;
             candidate.sr = candidate.r || radius;
             candidate.so = candidate.o || 1;
+            candidate.sc = candidate.color || [34, 34, 34]
             candidate.tx = positionedData[i].x;
             candidate.ty = positionedData[i].y;
             candidate.tr = positionedData[i].r || radius;
             candidate.to = positionedData[i].o || 1;
+
+            if (positionedData[i].color) {
+                candidate.tc = positionedData[i].color
+            } else {
+                candidate.tc = candidate.pledged ? [61, 181, 64] : [199, 0, 0];
+            }
         }.bind(this));
 
         if (timer !== undefined) {
@@ -200,7 +240,11 @@ export default {
                 candidate.y = candidate.sy * (1 - t) + candidate.ty * t;
                 candidate.r = candidate.sr * (1 - t) + candidate.tr * t;
                 candidate.o = candidate.so * (1 - t) + candidate.to * t;
-                candidate.fill = candidate.pledged ? `rgba(61, 181, 64, ${candidate.o})` : `rgba(199, 0, 0, ${candidate.o})`
+                candidate.color = [];
+                candidate.color[0] = candidate.sc[0] * (1 - t) + candidate.tc[0] * t;
+                candidate.color[1] = candidate.sc[1] * (1 - t) + candidate.tc[1] * t;
+                candidate.color[2] = candidate.sc[2] * (1 - t) + candidate.tc[2] * t;
+                candidate.fill = `rgba(${candidate.color[0]}, ${candidate.color[1]}, ${candidate.color[2]}, ${candidate.o})`
             });
 
             this.draw();
