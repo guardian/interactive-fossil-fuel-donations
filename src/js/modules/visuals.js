@@ -60,7 +60,7 @@ export default {
         let activeSlide = parseInt($('.uit-visuals').attr('data-set'));
         let positions;
 
-        if (activeSlide === 0) {
+        if (activeSlide === 1) {
             let levels = {};
 
             levels.true = [];
@@ -112,7 +112,7 @@ export default {
             }
 
             this.animate(leaves);
-        } else if (activeSlide === 1) {
+        } else if (activeSlide === 2) {
             let levels = {};
             levels.true = [];
             levels.true.push({
