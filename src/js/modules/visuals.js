@@ -19,7 +19,7 @@ export default {
     loadImages: function() {
         data.forEach(function(d) {
             let image = new Image();
-                image.src = '/assets/' + this.handlise(d.candidate) + '.png';
+                image.src = '{{ path }}/assets/' + this.handlise(d.candidate) + '.png';
                 image.onload = function() {
                     d.image = image;
                 }.bind(this);
