@@ -201,6 +201,48 @@ export default {
             }
 
             this.animate(leaves);
+        } else {
+            var highlightedCandidates = {
+                3: ['Beto O\'Rourke'],
+                4: ['Michael Bennet'],
+                5: ['Wayne Messam', 'Eric Swalwell']
+            }
+
+            let levels = [];
+                levels.push({
+                    id: 'candidates',
+                    parentId: null
+                });
+
+            for (var i in data) {
+                var focused = highlightedCandidates[activeSlide].includes(data[i].candidate);
+
+                levels.push({
+                    id: data[i].candidate,
+                    parentId: 'candidates',
+                    value: focused ? 120 : radius
+                })
+            }
+
+            let root = d3.stratify()
+                (levels)
+                .sum(function(d) { return d.value })
+                .sort(function(a, b) { return b.value - a.value });
+
+            let pack = d3.pack()
+                .size([width, height])
+                .radius(function(d) { return d.value })
+                .padding(function(d) { return 30 });
+
+            const packed = pack(root);
+            let leaves = packed.leaves();
+
+            for (var i in leaves) {
+                var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
+                leaves[i].o = focused ? 1 : 0.4;
+            }
+
+            this.animate(leaves);
         }
     },
 
