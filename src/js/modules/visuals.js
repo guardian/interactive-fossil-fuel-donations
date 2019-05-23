@@ -2,14 +2,19 @@ import * as d3 from 'd3';
 import scroll from '../modules/scroll.js';
 import data from '../../../.data/candidates.json';
 
-const radius = 32;
+const radius = {
+    mobile: 16,
+    desktop: 32
+}
+
 let width,
     height,
     ctx,
     ease = d3.easeCubicOut,
     timer,
     imageCount = data.length,
-    loadedCount = 0;
+    loadedCount = 0,
+    size;
 
 export default {
     init: function() {
@@ -32,6 +37,7 @@ export default {
 
         if (imageCount === loadedCount) {
             this.bindings();
+            this.checkForMobile();
             this.sortData();
             this.setupCanvas();
             scroll.init();
@@ -45,8 +51,13 @@ export default {
 
         $(window).resize(function() {
             this.setupCanvas();
+            this.checkForMobile();
             this.drawCandidates();
         }.bind(this));
+    },
+
+    checkForMobile: function() {
+        size = $(window).width() < 768 ? 'mobile' : 'desktop';
     },
 
     sortData: function() {
@@ -89,7 +100,7 @@ export default {
                 levels.push({
                     id: data[i].candidate,
                     parentId: 'parent',
-                    value: radius * 2
+                    value: radius[size] * 2
                 });
             }
 
@@ -100,7 +111,7 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height])
-                .radius(function(d) { return radius })
+                .radius(function(d) { return radius[size] })
                 .padding(function(d) { return 30 });
 
             const packed = pack(root);
@@ -131,7 +142,7 @@ export default {
                 levels[pledged].push({
                     id: data[i].candidate,
                     parentId: pledged,
-                    value: radius * 2
+                    value: radius[size] * 2
                 });
             }
 
@@ -147,7 +158,7 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height / 1.5])
-                .radius(function(d) { return radius; })
+                .radius(function(d) { return radius[size]; })
                 .padding(function(d) { return 30; });
 
             let packedTrue = pack(rootTrue);
@@ -182,7 +193,7 @@ export default {
                 levels[received].push({
                     id: data[i].candidate,
                     parentId: received,
-                    value: data[i].total || radius * 2
+                    value: data[i].total || radius[size] * 2
                 });
             }
 
@@ -202,7 +213,7 @@ export default {
 
             let packFalse = d3.pack()
                 .size([width, height / 3])
-                .radius(function(d) { return radius; })
+                .radius(function(d) { return radius[size]; })
                 .padding(function(d) { return 30; });
 
             let packedTrue = packTrue(rootTrue);
@@ -239,7 +250,7 @@ export default {
                 levels.push({
                     id: data[i].candidate,
                     parentId: 'candidates',
-                    value: focused ? 120 : radius
+                    value: focused ? 120 : radius[size]
                 })
             }
 
@@ -276,12 +287,12 @@ export default {
         data.forEach(function(candidate, i) {
             candidate.sx = candidate.x || width / 2;
             candidate.sy = candidate.y || height / 2;
-            candidate.sr = candidate.r || radius;
+            candidate.sr = candidate.r || radius[size];
             candidate.so = candidate.o || 1;
             candidate.sc = candidate.color || [34, 34, 34]
             candidate.tx = positionedData[i].x;
             candidate.ty = positionedData[i].y;
-            candidate.tr = positionedData[i].r || radius;
+            candidate.tr = positionedData[i].r || radius[size];
             candidate.to = positionedData[i].o || 1;
             candidate.money = positionedData[i].money;
 
