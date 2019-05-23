@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import scroll from '../modules/scroll.js';
 import data from '../../../.data/candidates.json';
 
 const radius = 32;
@@ -6,14 +7,13 @@ let width,
     height,
     ctx,
     ease = d3.easeCubicOut,
-    timer;
+    timer,
+    imageCount = data.length,
+    loadedCount = 0;
 
 export default {
     init: function() {
         this.loadImages();
-        this.bindings();
-        this.sortData();
-        this.setupCanvas();
     },
 
     loadImages: function() {
@@ -22,8 +22,20 @@ export default {
                 image.src = '{{ path }}/assets/' + this.handlise(d.candidate) + '.png';
                 image.onload = function() {
                     d.image = image;
+                    this.checkForAllImages();
                 }.bind(this);
         }.bind(this));
+    },
+
+    checkForAllImages: function() {
+        loadedCount++;1
+
+        if (imageCount === loadedCount) {
+            this.bindings();
+            this.sortData();
+            this.setupCanvas();
+            scroll.init();
+        }
     },
 
     bindings: function() {
