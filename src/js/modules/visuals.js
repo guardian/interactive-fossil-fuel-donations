@@ -7,6 +7,16 @@ const radius = {
     desktop: 32
 }
 
+const fontSize = {
+    mobile: 12,
+    desktop: 16
+}
+
+const padding = {
+    mobile: 20,
+    desktop: 30
+}
+
 let width,
     height,
     ctx,
@@ -112,7 +122,7 @@ export default {
             let pack = d3.pack()
                 .size([width, height])
                 .radius(function(d) { return radius[size] })
-                .padding(function(d) { return 30 });
+                .padding(function(d) { return padding[size] });
 
             const packed = pack(root);
             let leaves = packed.leaves();
@@ -159,7 +169,7 @@ export default {
             let pack = d3.pack()
                 .size([width, height / 1.5])
                 .radius(function(d) { return radius[size]; })
-                .padding(function(d) { return 30; });
+                .padding(function(d) { return padding[size]; });
 
             let packedTrue = pack(rootTrue);
             let packedFalse = pack(rootFalse);
@@ -209,12 +219,12 @@ export default {
 
             let packTrue = d3.pack()
                 .size([width, height / 1.5])
-                .padding(function(d) { return 30; });
+                .padding(function(d) { return padding[size]; });
 
             let packFalse = d3.pack()
                 .size([width, height / 3])
                 .radius(function(d) { return radius[size]; })
-                .padding(function(d) { return 30; });
+                .padding(function(d) { return padding[size]; });
 
             let packedTrue = packTrue(rootTrue);
             let packedFalse = packFalse(rootFalse);
@@ -262,7 +272,7 @@ export default {
             let pack = d3.pack()
                 .size([width, height])
                 .radius(function(d) { return d.value })
-                .padding(function(d) { return 30 });
+                .padding(function(d) { return padding[size] });
 
             const packed = pack(root);
             let leaves = packed.leaves();
@@ -353,9 +363,9 @@ export default {
             }
 
             ctx.fillStyle = '#222';
-            ctx.font = '14px Guardian Sans Web';
+            ctx.font = `${fontSize[size]}px Guardian Sans Web`;
             ctx.textAlign = 'center';
-            ctx.fillText(d.surname + (d.money ? ' ' + this.formatMoney(d.total) : ''), d.x, d.y + d.r + 15);
+            ctx.fillText(d.surname + (d.money ? ' ' + this.formatMoney(d.total) : ''), d.x, d.y + d.r + (fontSize[size] + 1));
         }.bind(this));
 
         ctx.restore();
