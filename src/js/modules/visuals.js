@@ -323,7 +323,7 @@ export default {
             ctx.fillStyle = '#222';
             ctx.font = '14px Guardian Sans Web';
             ctx.textAlign = 'center';
-            ctx.fillText(d.surname, d.x, d.y + d.r + 15);
+            ctx.fillText(d.surname + ' $10210', d.x, d.y + d.r + 15);
 
         }.bind(this));
 
