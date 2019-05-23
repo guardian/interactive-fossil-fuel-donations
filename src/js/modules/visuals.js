@@ -41,7 +41,12 @@ export default {
     bindings: function() {
         $('.uit-visuals').on('shift', function(e) {
             this.drawCandidates();
-        }.bind(this))
+        }.bind(this));
+
+        $(window).resize(function() {
+            this.setupCanvas();
+            this.drawCandidates();
+        }.bind(this));
     },
 
     sortData: function() {
@@ -53,6 +58,7 @@ export default {
     },
 
     setupCanvas: function() {
+        $('.uit-visuals canvas').remove();
         width = $('.uit-visuals').width();
         height = $('.uit-visuals').height();
 
