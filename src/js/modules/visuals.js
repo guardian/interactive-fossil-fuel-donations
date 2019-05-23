@@ -210,6 +210,7 @@ export default {
                     leaves[i].y += height / 1.5;
                     leaves[i].o = 0.3;
                 }
+                leaves[i].money = true;
             }
 
             this.animate(leaves);
@@ -252,6 +253,7 @@ export default {
             for (var i in leaves) {
                 var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
                 leaves[i].o = focused ? 1 : 0.4;
+                leaves[i].money = true;
             }
 
             this.animate(leaves);
@@ -275,6 +277,7 @@ export default {
             candidate.ty = positionedData[i].y;
             candidate.tr = positionedData[i].r || radius;
             candidate.to = positionedData[i].o || 1;
+            candidate.money = positionedData[i].money;
 
             if (positionedData[i].color) {
                 candidate.tc = positionedData[i].color
@@ -335,11 +338,24 @@ export default {
             ctx.fillStyle = '#222';
             ctx.font = '14px Guardian Sans Web';
             ctx.textAlign = 'center';
-            ctx.fillText(d.surname + ' $10210', d.x, d.y + d.r + 15);
-
+            ctx.fillText(d.surname + (d.money ? ' ' + this.formatMoney(d.total) : ''), d.x, d.y + d.r + 15);
         }.bind(this));
 
         ctx.restore();
+    },
+
+    formatMoney: function(number) {
+        if (!number) {
+            return '$0';
+        } else {
+            var figureCount = number.toString().length;
+
+            if (figureCount >= 4) {
+                return '$' + Math.round(number / 1000) + 'k';
+            } else {
+                return '$' + number;
+            }
+        }
     },
 
     handlise: function(string) {
