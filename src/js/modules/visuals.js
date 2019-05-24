@@ -9,7 +9,7 @@ const radius = {
 
 const fontSize = {
     mobile: 12,
-    desktop: 16
+    desktop: 14
 }
 
 const padding = {
@@ -80,8 +80,8 @@ export default {
 
     setupCanvas: function() {
         $('.uit-visuals canvas').remove();
-        width = $('.uit-visuals').width();
-        height = $('.uit-visuals').height();
+        width = size === 'mobile' ? $(window).width() : $('.uit-visuals').width();
+        height = size === 'mobile' ? $(window).height() / 4 * 3 : $('.uit-visuals').height();
 
         const canvas = d3.select('.uit-visuals')
             .append('canvas')

@@ -25,6 +25,19 @@ export default {
     onScroll: function() {
         scrollTop = $(window).scrollTop();
 
+        this.fixVisuals();
+        this.setCurrentSlide();
+    },
+
+    fixVisuals: function() {
+        if (scrollTop > $('.uit-slides').offset().top) {
+            $('.uit-visuals').addClass('is-fixed');
+        } else {
+            $('.uit-visuals').removeClass('is-fixed');
+        }
+    },
+
+    setCurrentSlide: function() {
         let target;
 
         $('.uit-slide').each(function(i, el) {

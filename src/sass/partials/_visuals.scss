@@ -1,22 +1,29 @@
 .uit-visuals {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    &.is-fixed {
+        @include mq($until: desktop) {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
 
     @include mq(desktop) {
-        left: auto;
-        right: auto;
-        margin-left: -20px;
-        width: calc(980px / 2);
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: calc(940px / 2);
+        left: calc((100% - 940px) / 2);
     }
 
     @include mq(leftCol) {
-        width: calc(1140px / 2);
+        width: calc(1100px / 2);
+        left: calc((100% - 1100px) / 2);
     }
 
     @include mq(wide) {
-        width: calc(1300px / 2);
+        width: calc(1260px / 2);
+        left: calc((100% - 1260px) / 2);
     }
 }
