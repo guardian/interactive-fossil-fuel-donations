@@ -17,6 +17,11 @@ const fontSize = {
     desktop: 16
 }
 
+const moneySize = {
+    mobile: 20,
+    desktop: 28
+}
+
 const padding = {
     mobile: 2,
     desktop: 3
@@ -375,7 +380,11 @@ export default {
                 ctx.fillStyle = '#fff';
                 ctx.font = `${fontSize[size]}px Guardian Sans Web`;
                 ctx.textAlign = 'center';
-                ctx.fillText(d.surname + (d.money ? ' ' + this.formatMoney(d.total) : ''), d.x, d.y + (fontSize[size] / 2));
+                ctx.fillText(d.surname, d.x, d.y + (fontSize[size] / 2) - (d.money ? fontSize[size] / 2 : 0) );
+            }
+            if (d.labels && d.money) {
+                ctx.font = `${moneySize[size]}px Guardian Figures`;
+                ctx.fillText(this.formatMoney(d.total), d.x, d.y + (moneySize[size]))
             }
         }.bind(this));
 
