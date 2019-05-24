@@ -28,5 +28,7 @@ figure.interactive-atom {
 
 // shows footer
 .l-footer {
+    position: relative;
+    z-index: 20;
     display: block !important;
 }
