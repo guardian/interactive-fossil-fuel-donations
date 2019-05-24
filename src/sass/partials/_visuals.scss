@@ -26,4 +26,10 @@
         width: calc(1260px / 2);
         left: calc((100% - 1260px) / 2);
     }
+
+    canvas {
+        @include mq($until: desktop) {
+            margin-left: -20px;
+        }
+    }
 }

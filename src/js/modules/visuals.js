@@ -2,21 +2,6 @@ import * as d3 from 'd3';
 import scroll from '../modules/scroll.js';
 import data from '../../../.data/candidates.json';
 
-const radius = {
-    mobile: 16,
-    desktop: 32
-}
-
-const fontSize = {
-    mobile: 12,
-    desktop: 14
-}
-
-const padding = {
-    mobile: 20,
-    desktop: 30
-}
-
 let width,
     height,
     ctx,
@@ -25,6 +10,18 @@ let width,
     imageCount = data.length,
     loadedCount = 0,
     size;
+
+const radius = 32;
+
+const fontSize = {
+    mobile: 12,
+    desktop: 14
+}
+
+const padding = {
+    mobile: 2,
+    desktop: 3
+}
 
 export default {
     init: function() {
@@ -67,7 +64,7 @@ export default {
     },
 
     checkForMobile: function() {
-        size = $(window).width() < 768 ? 'mobile' : 'desktop';
+        size = $(window).width() < 980 ? 'mobile' : 'desktop';
     },
 
     sortData: function() {
@@ -110,7 +107,7 @@ export default {
                 levels.push({
                     id: data[i].candidate,
                     parentId: 'parent',
-                    value: radius[size] * 2
+                    value: 1
                 });
             }
 
@@ -121,7 +118,6 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height])
-                .radius(function(d) { return radius[size] })
                 .padding(function(d) { return padding[size] });
 
             const packed = pack(root);
@@ -129,6 +125,7 @@ export default {
 
             for (var i in leaves) {
                 leaves[i].color = [32, 32, 32];
+                leaves[i].showFaces = true;
             }
 
             this.animate(leaves);
@@ -152,7 +149,7 @@ export default {
                 levels[pledged].push({
                     id: data[i].candidate,
                     parentId: pledged,
-                    value: radius[size]
+                    value: 1
                 });
             }
 
@@ -168,7 +165,6 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height / 1.5])
-                .radius(function(d) { return radius[size]; })
                 .padding(function(d) { return padding[size]; });
 
             let packedTrue = pack(rootTrue);
@@ -203,7 +199,7 @@ export default {
                 levels[received].push({
                     id: data[i].candidate,
                     parentId: received,
-                    value: data[i].total || radius[size]
+                    value: data[i].total || 1
                 });
             }
 
@@ -223,7 +219,6 @@ export default {
 
             let packFalse = d3.pack()
                 .size([width, height / 3])
-                .radius(function(d) { return radius[size]; })
                 .padding(function(d) { return padding[size]; });
 
             let packedTrue = packTrue(rootTrue);
@@ -235,7 +230,7 @@ export default {
             for (var i in leaves) {
                 if (leaves[i].data.parentId === 'false') {
                     leaves[i].y += height / 1.5;
-                    leaves[i].o = 0.3;
+                    leaves[i].o = 0.2;
                 }
                 leaves[i].money = true;
             }
@@ -280,6 +275,7 @@ export default {
                 var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
                 leaves[i].o = focused ? 1 : 0.4;
                 leaves[i].money = true;
+                leaves[i].showFaces = true;
             }
 
             this.animate(leaves);
@@ -293,19 +289,22 @@ export default {
             return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
 
-        console.log(positionedData);
-
         data.forEach(function(candidate, i) {
+            candidate.money = positionedData[i].money;
+            candidate.showFaces = positionedData[i].showFaces;
+
             candidate.sx = candidate.x || width / 2;
             candidate.sy = candidate.y || height / 2;
-            candidate.sr = candidate.r || radius[size];
+            candidate.sr = candidate.r || radius;
             candidate.so = candidate.o || 1;
+            candidate.sfo = candidate.fo || 1;
             candidate.sc = candidate.color || [34, 34, 34]
             candidate.tx = positionedData[i].x;
             candidate.ty = positionedData[i].y;
-            candidate.tr = positionedData[i].r || radius[size];
+            candidate.tr = positionedData[i].r || radius;
             candidate.to = positionedData[i].o || 1;
-            candidate.money = positionedData[i].money;
+            candidate.tfo = candidate.showFaces ? 1 : 0.2;
+
 
             if (positionedData[i].color) {
                 candidate.tc = positionedData[i].color
@@ -325,6 +324,7 @@ export default {
                 candidate.y = candidate.sy * (1 - t) + candidate.ty * t;
                 candidate.r = candidate.sr * (1 - t) + candidate.tr * t;
                 candidate.o = candidate.so * (1 - t) + candidate.to * t;
+                candidate.fo = candidate.sfo * (1 - t) + candidate.tfo * t;
                 candidate.color = [];
                 candidate.color[0] = candidate.sc[0] * (1 - t) + candidate.tc[0] * t;
                 candidate.color[1] = candidate.sc[1] * (1 - t) + candidate.tc[1] * t;
@@ -357,16 +357,18 @@ export default {
                 ctx.arc(d.x, d.y, d.r, 0, 2 * Math.PI, true);
                 ctx.closePath();
                 ctx.clip();
-                ctx.globalAlpha = d.o;
+                ctx.globalAlpha = d.showFaces ? d.o : d.fo;
 
                 ctx.drawImage(d.image, d.x - d.r, d.y - d.r, d.r * 2, d.r * 2);
                 ctx.restore();
             }
 
-            ctx.fillStyle = '#222';
-            ctx.font = `${fontSize[size]}px Guardian Sans Web`;
-            ctx.textAlign = 'center';
-            ctx.fillText(d.surname + (d.money ? ' ' + this.formatMoney(d.total) : ''), d.x, d.y + d.r + (fontSize[size] + 1));
+            if (!d.showFaces) {
+                ctx.fillStyle = '#fff';
+                ctx.font = `${fontSize[size]}px Guardian Sans Web`;
+                ctx.textAlign = 'center';
+                ctx.fillText(d.surname + (d.money ? ' ' + this.formatMoney(d.total) : ''), d.x, d.y + (fontSize[size] / 2));
+            }
         }.bind(this));
 
         ctx.restore();
