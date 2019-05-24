@@ -1,7 +1,7 @@
 .uit-slide {
     position: relative;
     z-index: 2;
-    padding: 40vh 0;
+    padding: 51vh 0;
     font-family: 'Guardian Egyptian Web';
     font-weight: 400;
     font-size: 18px;
@@ -31,4 +31,10 @@
 
 .uit-slide__no-signed-label {
     color: $c-red;
+}
+
+.uit-source {
+    font-family: 'Guardian Sans Web';
+    font-size: 14px;
+    color: $c-grey;
 }
