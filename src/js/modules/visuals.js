@@ -180,6 +180,7 @@ export default {
                 if (leaves[i].data.parentId === 'false') {
                     leaves[i].y += height / 3;
                 }
+                leaves[i].labels = true;
             }
 
             this.animate(leaves);
@@ -234,8 +235,9 @@ export default {
             for (var i in leaves) {
                 if (leaves[i].data.parentId === 'false') {
                     leaves[i].y += height / 1.5;
-                    leaves[i].o = 0.2;
+                    leaves[i].blurred = true;
                 }
+                leaves[i].labels = true;
                 leaves[i].money = true;
             }
 
@@ -278,9 +280,8 @@ export default {
 
             for (var i in leaves) {
                 var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
-                leaves[i].o = focused ? 1 : 0.4;
-                leaves[i].money = true;
-                leaves[i].showFaces = true;
+                leaves[i].blurred = !focused;
+                leaves[i].showFaces = focused;
             }
 
             this.animate(leaves);
@@ -297,24 +298,27 @@ export default {
         data.forEach(function(candidate, i) {
             candidate.money = positionedData[i].money;
             candidate.showFaces = positionedData[i].showFaces;
+            candidate.labels = positionedData[i].labels;
 
             candidate.sx = candidate.x || width / 2;
             candidate.sy = candidate.y || height / 2;
             candidate.sr = candidate.r || radius;
             candidate.so = candidate.o || 1;
-            candidate.sfo = candidate.fo || 1;
             candidate.sc = candidate.color || [34, 34, 34]
             candidate.tx = positionedData[i].x;
             candidate.ty = positionedData[i].y;
             candidate.tr = positionedData[i].r || radius;
-            candidate.to = positionedData[i].o || 1;
-            candidate.tfo = candidate.showFaces ? 1 : 0.2;
+            candidate.to = candidate.showFaces ? 1 : 0.2;
 
 
             if (positionedData[i].color) {
                 candidate.tc = positionedData[i].color
             } else {
-                candidate.tc = candidate.pledged ? [61, 181, 64] : [199, 0, 0];
+                if (positionedData[i].blurred) {
+                    candidate.tc = candidate.pledged ? [171, 223, 173] : [231, 145, 145];
+                } else {
+                    candidate.tc = candidate.pledged ? [61, 181, 64] : [199, 0, 0];
+                }
             }
         }.bind(this));
 
@@ -329,12 +333,11 @@ export default {
                 candidate.y = candidate.sy * (1 - t) + candidate.ty * t;
                 candidate.r = candidate.sr * (1 - t) + candidate.tr * t;
                 candidate.o = candidate.so * (1 - t) + candidate.to * t;
-                candidate.fo = candidate.sfo * (1 - t) + candidate.tfo * t;
                 candidate.color = [];
                 candidate.color[0] = candidate.sc[0] * (1 - t) + candidate.tc[0] * t;
                 candidate.color[1] = candidate.sc[1] * (1 - t) + candidate.tc[1] * t;
                 candidate.color[2] = candidate.sc[2] * (1 - t) + candidate.tc[2] * t;
-                candidate.fill = `rgba(${candidate.color[0]}, ${candidate.color[1]}, ${candidate.color[2]}, ${candidate.o})`
+                candidate.fill = `rgb(${candidate.color[0]}, ${candidate.color[1]}, ${candidate.color[2]})`
             });
 
             this.draw();
@@ -362,13 +365,13 @@ export default {
                 ctx.arc(d.x, d.y, d.r, 0, 2 * Math.PI, true);
                 ctx.closePath();
                 ctx.clip();
-                ctx.globalAlpha = d.showFaces ? d.o : d.fo;
+                ctx.globalAlpha = d.o
 
                 ctx.drawImage(d.image, d.x - d.r, d.y - d.r, d.r * 2, d.r * 2);
                 ctx.restore();
             }
 
-            if (!d.showFaces) {
+            if (d.labels) {
                 ctx.fillStyle = '#fff';
                 ctx.font = `${fontSize[size]}px Guardian Sans Web`;
                 ctx.textAlign = 'center';
@@ -426,10 +429,6 @@ export default {
         const packed = pack(root);
         let leaves = packed.leaves();
 
-        console.log(leaves);
-
         radius = leaves[0].r;
-
-        console.log(radius);
     }
 };
