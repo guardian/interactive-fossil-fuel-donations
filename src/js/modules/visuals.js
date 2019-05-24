@@ -380,11 +380,11 @@ export default {
                 ctx.fillStyle = '#fff';
                 ctx.font = `${fontSize[size]}px Guardian Sans Web`;
                 ctx.textAlign = 'center';
-                ctx.fillText(d.surname, d.x, d.y + (fontSize[size] / 2) - (d.money ? fontSize[size] / 2 : 0) );
+                ctx.fillText(d.surname, d.x, d.y + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
             }
             if (d.labels && d.money) {
                 ctx.font = `${moneySize[size]}px Guardian Figures`;
-                ctx.fillText(this.formatMoney(d.total), d.x, d.y + (moneySize[size]))
+                ctx.fillText(this.formatMoney(d.total), d.x, d.y + (moneySize[size] / 1.5))
             }
         }.bind(this));
 
