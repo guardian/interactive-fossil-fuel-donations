@@ -152,7 +152,7 @@ export default {
                 levels[pledged].push({
                     id: data[i].candidate,
                     parentId: pledged,
-                    value: radius[size] * 2
+                    value: radius[size]
                 });
             }
 
@@ -203,7 +203,7 @@ export default {
                 levels[received].push({
                     id: data[i].candidate,
                     parentId: received,
-                    value: data[i].total || radius[size] * 2
+                    value: data[i].total || radius[size]
                 });
             }
 
@@ -260,7 +260,7 @@ export default {
                 levels.push({
                     id: data[i].candidate,
                     parentId: 'candidates',
-                    value: focused ? 120 : radius[size]
+                    value: focused ? 10 : 1
                 })
             }
 
@@ -271,7 +271,6 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height])
-                .radius(function(d) { return d.value })
                 .padding(function(d) { return padding[size] });
 
             const packed = pack(root);
@@ -293,6 +292,8 @@ export default {
             var textB = b.id.toUpperCase();
             return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
         });
+
+        console.log(positionedData);
 
         data.forEach(function(candidate, i) {
             candidate.sx = candidate.x || width / 2;
