@@ -9,13 +9,12 @@ let width,
     timer,
     imageCount = data.length,
     loadedCount = 0,
-    size;
-
-const radius = 32;
+    size,
+    radius;
 
 const fontSize = {
     mobile: 12,
-    desktop: 14
+    desktop: 16
 }
 
 const padding = {
@@ -47,6 +46,7 @@ export default {
             this.checkForMobile();
             this.sortData();
             this.setupCanvas();
+            this.setRadius();
             scroll.init();
         }
     },
@@ -59,6 +59,7 @@ export default {
         $(window).resize(function() {
             this.setupCanvas();
             this.checkForMobile();
+            this.setRadius();
             this.drawCandidates();
         }.bind(this));
     },
@@ -118,6 +119,7 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height])
+                .radius(function(d) { return radius })
                 .padding(function(d) { return padding[size] });
 
             const packed = pack(root);
@@ -165,6 +167,7 @@ export default {
 
             let pack = d3.pack()
                 .size([width, height / 1.5])
+                .radius(function(d) { return radius })
                 .padding(function(d) { return padding[size]; });
 
             let packedTrue = pack(rootTrue);
@@ -219,6 +222,7 @@ export default {
 
             let packFalse = d3.pack()
                 .size([width, height / 3])
+                .radius(function(d) { return radius })
                 .padding(function(d) { return padding[size]; });
 
             let packedTrue = packTrue(rootTrue);
@@ -255,7 +259,7 @@ export default {
                 levels.push({
                     id: data[i].candidate,
                     parentId: 'candidates',
-                    value: focused ? 10 : 1
+                    value: focused ? radius * 3 : radius
                 })
             }
 
@@ -263,6 +267,7 @@ export default {
                 (levels)
                 .sum(function(d) { return d.value })
                 .sort(function(a, b) { return b.value - a.value });
+
 
             let pack = d3.pack()
                 .size([width, height])
@@ -392,5 +397,39 @@ export default {
         if (string) {
             return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ /g, '-').replace('\'', '').toLowerCase();
         }
+    },
+
+    setRadius: function() {
+        let levels = [];
+            levels.push({
+                id: 'parent',
+                parentId: null
+            });
+
+        for (var i in data) {
+            levels.push({
+                id: data[i].candidate,
+                parentId: 'parent',
+                value: 1
+            });
+        }
+
+        let root = d3.stratify()
+            (levels)
+            .sum(function(d) { return d.value })
+            .sort(function(a, b) { return b.value - a.value });
+
+        let pack = d3.pack()
+            .size([width, height])
+            .padding(function(d) { return padding[size] });
+
+        const packed = pack(root);
+        let leaves = packed.leaves();
+
+        console.log(leaves);
+
+        radius = leaves[0].r;
+
+        console.log(radius);
     }
 };
