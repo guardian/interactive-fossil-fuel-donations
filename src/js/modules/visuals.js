@@ -251,7 +251,7 @@ export default {
             var highlightedCandidates = {
                 3: ['Beto O\'Rourke'],
                 4: ['Michael Bennet'],
-                5: ['Wayne Messam', 'Eric Swalwell']
+                5: ['Kirsten Gillibrand']
             }
 
             let levels = [];
