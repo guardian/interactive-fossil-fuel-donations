@@ -110,11 +110,13 @@ export default {
                 });
 
             for (var i in data) {
-                levels.push({
-                    id: data[i].candidate,
-                    parentId: 'parent',
-                    value: 1
-                });
+                if (data[i].candidate !== 'Donald Trump') {
+                    levels.push({
+                        id: data[i].candidate,
+                        parentId: 'parent',
+                        value: 1
+                    });
+                }
             }
 
             let root = d3.stratify()
@@ -152,12 +154,14 @@ export default {
             });
 
             for (var i in data) {
-                const pledged = data[i].pledged ? 'true' : 'false';
-                levels[pledged].push({
-                    id: data[i].candidate,
-                    parentId: pledged,
-                    value: 1
-                });
+                if (data[i].candidate !== 'Donald Trump') {
+                    const pledged = data[i].pledged ? 'true' : 'false';
+                    levels[pledged].push({
+                        id: data[i].candidate,
+                        parentId: pledged,
+                        value: 1
+                    });
+                }
             }
 
             let rootTrue = d3.stratify()
@@ -204,12 +208,21 @@ export default {
             });
 
             for (var i in data) {
-                const received = data[i].total ? 'true' : 'false';
-                levels[received].push({
-                    id: data[i].candidate,
-                    parentId: received,
-                    value: data[i].total || 1
-                });
+                if (activeSlide === 6) {
+                    const received = data[i].total ? 'true' : 'false';
+                    levels[received].push({
+                        id: data[i].candidate,
+                        parentId: received,
+                        value: data[i].total || 1
+                    });
+                } else if (data[i].candidate !== 'Donald Trump') {
+                    const received = data[i].total ? 'true' : 'false';
+                    levels[received].push({
+                        id: data[i].candidate,
+                        parentId: received,
+                        value: data[i].total || 1
+                    });
+                }
             }
 
             let rootTrue = d3.stratify()
@@ -269,36 +282,53 @@ export default {
     },
 
     animate: function(positionedData) {
-        positionedData.sort(function(a, b) {
-            var textA = a.id.toUpperCase();
-            var textB = b.id.toUpperCase();
-            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        var newPositionedData = {};
+
+        positionedData.forEach(function(candidate, i) {
+            newPositionedData[candidate.id] = candidate;
         });
 
         data.forEach(function(candidate, i) {
-            candidate.money = positionedData[i].money;
-            candidate.showFaces = positionedData[i].showFaces;
-            candidate.labels = positionedData[i].labels;
+            if (newPositionedData[candidate.candidate]) {
+                var positionedCandidate = newPositionedData[candidate.candidate];
 
-            candidate.sx = candidate.x || width / 2;
-            candidate.sy = candidate.y || height / 2;
-            candidate.sr = candidate.r || radius;
-            candidate.so = candidate.o || 1;
-            candidate.sc = candidate.color || [34, 34, 34]
-            candidate.tx = positionedData[i].x;
-            candidate.ty = positionedData[i].y;
-            candidate.tr = positionedData[i].r || radius;
-            candidate.to = candidate.showFaces ? 1 : 0.2;
+                candidate.money = positionedCandidate.money;
+                candidate.showFaces = positionedCandidate.showFaces;
+                candidate.labels = positionedCandidate.labels;
+
+                candidate.sx = candidate.x || width / 2;
+                candidate.sy = candidate.y || height / 2;
+                candidate.sr = candidate.r || radius;
+                candidate.so = candidate.o || 1;
+                candidate.sc = candidate.color || [34, 34, 34]
+                candidate.tx = positionedCandidate.x;
+                candidate.ty = positionedCandidate.y;
+                candidate.tr = positionedCandidate.r || radius;
+                candidate.to = candidate.showFaces ? 1 : 0.2;
 
 
-            if (positionedData[i].color) {
-                candidate.tc = positionedData[i].color
-            } else {
-                if (positionedData[i].blurred) {
-                    candidate.tc = candidate.pledged ? [171, 223, 173] : [231, 145, 145];
+                if (positionedCandidate.color) {
+                    candidate.tc = positionedCandidate.color
                 } else {
-                    candidate.tc = candidate.pledged ? [61, 181, 64] : [199, 0, 0];
+                    if (candidate.candidate === 'Donald Trump') {
+                        candidate.tc = [32, 32, 32];
+                    } else if (positionedCandidate.blurred) {
+                        candidate.tc = candidate.pledged ? [171, 223, 173] : [231, 145, 145];
+                    } else {
+                        candidate.tc = candidate.pledged ? [61, 181, 64] : [199, 0, 0];
+                    }
                 }
+            } else {
+                candidate.sx = candidate.x || -width / 2;
+                candidate.sy = candidate.y || height / 2;
+                candidate.sr = candidate.r || radius;
+                candidate.so = candidate.o || 1;
+                candidate.sc = candidate.c || [34, 34, 34];
+                candidate.tx = -width / 2;
+                candidate.ty = height / 2;
+                candidate.tr = radius;
+                candidate.to = 1;
+                candidate.tc = [34, 34, 34];
             }
         }.bind(this));
 
