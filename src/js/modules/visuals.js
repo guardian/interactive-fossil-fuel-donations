@@ -189,7 +189,7 @@ export default {
             }
 
             this.animate(leaves);
-        } else if (activeSlide === 2) {
+        } else {
             let levels = {};
             levels.true = [];
             levels.true.push({
@@ -237,56 +237,31 @@ export default {
             let leaves = packedTrue.leaves();
                 leaves = leaves.concat(packedFalse.leaves());
 
-            for (var i in leaves) {
-                if (leaves[i].data.parentId === 'false') {
-                    leaves[i].y += height / 1.5;
-                    leaves[i].blurred = true;
-                }
-                leaves[i].labels = true;
-                leaves[i].money = true;
-            }
-
-            this.animate(leaves);
-        } else {
             var highlightedCandidates = {
                 3: ['Beto O\'Rourke'],
                 4: ['Michael Bennet'],
                 5: ['Kirsten Gillibrand']
             }
 
-            let levels = [];
-                levels.push({
-                    id: 'candidates',
-                    parentId: null
-                });
+            var activeSlidesHighlights = highlightedCandidates[activeSlide];
 
-            for (var i in data) {
-                var focused = highlightedCandidates[activeSlide].includes(data[i].candidate);
-
-                levels.push({
-                    id: data[i].candidate,
-                    parentId: 'candidates',
-                    value: focused ? radius * 3 : radius
-                })
-            }
-
-            let root = d3.stratify()
-                (levels)
-                .sum(function(d) { return d.value })
-                .sort(function(a, b) { return b.value - a.value });
-
-
-            let pack = d3.pack()
-                .size([width, height])
-                .padding(function(d) { return padding[size] });
-
-            const packed = pack(root);
-            let leaves = packed.leaves();
 
             for (var i in leaves) {
-                var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
-                leaves[i].blurred = !focused;
-                leaves[i].showFaces = focused;
+                if (leaves[i].data.parentId === 'false') {
+                    leaves[i].y += height / 1.5;
+                    leaves[i].blurred = true;
+                }
+
+                if (activeSlidesHighlights) {
+                    var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
+                    leaves[i].blurred = !focused;
+                    leaves[i].showFaces = focused;
+                    leaves[i].labels = !focused;
+                    leaves[i].money = !focused;
+                } else {
+                    leaves[i].labels = true;
+                    leaves[i].money = true;
+                }
             }
 
             this.animate(leaves);
