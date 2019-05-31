@@ -33,6 +33,12 @@
     color: $c-red;
 }
 
+.uit-slide__generic-label,
+.uit-slide__no-signed-label,
+.uit-slide__signed-label {
+    font-weight: 600;
+}
+
 .uit-source {
     font-family: 'Guardian Sans Web';
     font-size: 14px;
