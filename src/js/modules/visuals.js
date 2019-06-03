@@ -314,6 +314,8 @@ export default {
                     candidate.offsetAngle = theta;
                     candidate.offsetY = candidate.ty + Math.sin(theta) * 60;
                     candidate.offsetX = candidate.tx + Math.cos(theta) * 60;
+                } else {
+                    candidate.offsetLabel = false;
                 }
 
                 if (positionedCandidate.color) {
