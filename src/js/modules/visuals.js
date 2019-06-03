@@ -75,9 +75,7 @@ export default {
 
     sortData: function() {
         data.sort(function(a, b) {
-            var textA = a.candidate.toUpperCase();
-            var textB = b.candidate.toUpperCase();
-            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            return b.total - a.total
         });
     },
 
@@ -236,11 +234,11 @@ export default {
                 .sort(function(a, b) { return b.value - a.value });
 
             let packTrue = d3.pack()
-                .size([width, height / 1.5])
+                .size([width * 0.9, height / 1.5])
                 .padding(function(d) { return padding[size]; });
 
             let packFalse = d3.pack()
-                .size([width, height / 3])
+                .size([width * 0.9, height / 3])
                 .radius(function(d) { return radius })
                 .padding(function(d) { return padding[size]; });
 
@@ -258,12 +256,13 @@ export default {
 
             var activeSlidesHighlights = highlightedCandidates[activeSlide];
 
-
             for (var i in leaves) {
                 if (leaves[i].data.parentId === 'false') {
                     leaves[i].y += height / 1.5;
                     leaves[i].blurred = true;
                 }
+
+                leaves[i].x += width * 0.05;
 
                 if (activeSlidesHighlights) {
                     var focused = highlightedCandidates[activeSlide].includes(leaves[i].id);
@@ -306,6 +305,16 @@ export default {
                 candidate.tr = positionedCandidate.r || radius;
                 candidate.to = candidate.showFaces ? 1 : 0.2;
 
+                if (candidate.money && candidate.labels && candidate.tr < (width / 20)) {
+                    candidate.offsetLabel = true;
+
+                    var dy = candidate.ty - (height / 3);
+                    var dx = candidate.tx - (width / 2);
+                    var theta = Math.atan2(dy, dx);
+                    candidate.offsetAngle = theta;
+                    candidate.offsetY = candidate.ty + Math.sin(theta) * 60;
+                    candidate.offsetX = candidate.tx + Math.cos(theta) * 60;
+                }
 
                 if (positionedCandidate.color) {
                     candidate.tc = positionedCandidate.color
@@ -382,14 +391,23 @@ export default {
             }
 
             if (d.labels) {
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = d.offsetLabel ? '#222' : '#fff';
                 ctx.font = `${fontSize[size]}px Guardian Sans Web`;
                 ctx.textAlign = 'center';
-                ctx.fillText(d.surname, d.x, d.y + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
+                if (d.offsetLabel) {
+                    ctx.fillText(d.surname, d.offsetX, d.offsetY + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
+                } else {
+                    ctx.fillText(d.surname, d.x, d.y + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
+                }
             }
+
             if (d.labels && d.money) {
                 ctx.font = `${moneySize[size]}px Guardian Figures`;
-                ctx.fillText(this.formatMoney(d.total), d.x, d.y + (moneySize[size] / 1.5))
+                if (d.offsetLabel) {
+                    ctx.fillText(this.formatMoney(d.total), d.offsetX, d.offsetY + (moneySize[size] / 1.5));
+                } else {
+                    ctx.fillText(this.formatMoney(d.total), d.x, d.y + (moneySize[size] / 1.5));
+                }
             }
         }.bind(this));
 
