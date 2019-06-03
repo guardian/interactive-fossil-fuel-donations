@@ -311,7 +311,7 @@ export default {
                     var dy = candidate.ty - (height / 3);
                     var dx = candidate.tx - (width / 2);
                     var theta = Math.atan2(dy, dx);
-                    candidate.offsetAngle = theta;
+                    console.log(theta * (180 / Math.PI));
                     candidate.offsetY = candidate.ty + Math.sin(theta) * 60;
                     candidate.offsetX = candidate.tx + Math.cos(theta) * 60;
                 } else {
@@ -361,7 +361,6 @@ export default {
                 candidate.fill = `rgb(${candidate.color[0]}, ${candidate.color[1]}, ${candidate.color[2]})`;
 
                 if (candidate.offsetLabel) {
-                    console.log(candidate.sx !== candidate.offsetX && candidate.sy !== candidate.offsetY);
                     if (candidate.lx !== candidate.offsetX && candidate.ly !== candidate.offsetY) {
                         candidate.lx = candidate.sx * (1 - t) + candidate.offsetX * t;
                         candidate.ly = candidate.sy * (1 - t) + candidate.offsetY * t;
