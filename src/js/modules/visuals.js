@@ -62,10 +62,10 @@ export default {
         }.bind(this));
 
         $(window).resize(function() {
-            this.setupCanvas();
             this.checkForMobile();
+            this.sortData();
+            this.setupCanvas();
             this.setRadius();
-            this.drawCandidates();
         }.bind(this));
     },
 
@@ -461,7 +461,7 @@ export default {
             .sort(function(a, b) { return b.value - a.value });
 
         let pack = d3.pack()
-            .size([width * 0.8, height])
+            .size([width, height])
             .padding(function(d) { return padding[size] });
 
         const packed = pack(root);

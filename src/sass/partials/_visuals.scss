@@ -31,5 +31,9 @@
         @include mq($until: desktop) {
             margin-left: -20px;
         }
+
+        @include mq($until: mobileLandscape) {
+            margin-left: -10px;
+        }
     }
 }
