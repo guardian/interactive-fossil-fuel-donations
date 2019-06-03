@@ -358,7 +358,21 @@ export default {
                 candidate.color[0] = candidate.sc[0] * (1 - t) + candidate.tc[0] * t;
                 candidate.color[1] = candidate.sc[1] * (1 - t) + candidate.tc[1] * t;
                 candidate.color[2] = candidate.sc[2] * (1 - t) + candidate.tc[2] * t;
-                candidate.fill = `rgb(${candidate.color[0]}, ${candidate.color[1]}, ${candidate.color[2]})`
+                candidate.fill = `rgb(${candidate.color[0]}, ${candidate.color[1]}, ${candidate.color[2]})`;
+
+                if (candidate.offsetLabel) {
+                    console.log(candidate.sx !== candidate.offsetX && candidate.sy !== candidate.offsetY);
+                    if (candidate.lx !== candidate.offsetX && candidate.ly !== candidate.offsetY) {
+                        candidate.lx = candidate.sx * (1 - t) + candidate.offsetX * t;
+                        candidate.ly = candidate.sy * (1 - t) + candidate.offsetY * t;
+                    } else {
+                        candidate.lx = candidate.offsetX;
+                        candidate.ly = candidate.offsetY;
+                    }
+                } else {
+                    candidate.lx = candidate.x;
+                    candidate.ly = candidate.y;
+                }
             });
 
             this.draw();
@@ -396,20 +410,12 @@ export default {
                 ctx.fillStyle = d.offsetLabel ? '#222' : '#fff';
                 ctx.font = `${fontSize[size]}px Guardian Sans Web`;
                 ctx.textAlign = 'center';
-                if (d.offsetLabel) {
-                    ctx.fillText(d.surname, d.offsetX, d.offsetY + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
-                } else {
-                    ctx.fillText(d.surname, d.x, d.y + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
-                }
+                ctx.fillText(d.surname, d.lx, d.ly + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
             }
 
             if (d.labels && d.money) {
                 ctx.font = `${moneySize[size]}px Guardian Figures`;
-                if (d.offsetLabel) {
-                    ctx.fillText(this.formatMoney(d.total), d.offsetX, d.offsetY + (moneySize[size] / 1.5));
-                } else {
-                    ctx.fillText(this.formatMoney(d.total), d.x, d.y + (moneySize[size] / 1.5));
-                }
+                ctx.fillText(this.formatMoney(d.total), d.lx, d.ly + (moneySize[size] / 1.5));
             }
         }.bind(this));
 
@@ -457,7 +463,7 @@ export default {
             .sort(function(a, b) { return b.value - a.value });
 
         let pack = d3.pack()
-            .size([width, height])
+            .size([width * 0.8, height])
             .padding(function(d) { return padding[size] });
 
         const packed = pack(root);
