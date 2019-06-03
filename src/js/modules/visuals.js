@@ -14,17 +14,17 @@ let width,
 
 const fontSize = {
     mobile: 12,
-    desktop: 16
+    desktop: 14
 }
 
 const moneySize = {
     mobile: 20,
-    desktop: 28
+    desktop: 24
 }
 
 const padding = {
     mobile: 2,
-    desktop: 3
+    desktop: 5
 }
 
 export default {
@@ -82,7 +82,7 @@ export default {
     setupCanvas: function() {
         $('.uit-visuals canvas').remove();
         width = size === 'mobile' ? $(window).width() : $('.uit-visuals').width();
-        height = size === 'mobile' ? $(window).height() / 4 * 3 : $('.uit-visuals').height();
+        height = size === 'mobile' ? $(window).height() : $('.uit-visuals').height();
 
         const canvas = d3.select('.uit-visuals')
             .append('canvas')
@@ -234,7 +234,7 @@ export default {
                 .sort(function(a, b) { return b.value - a.value });
 
             let packTrue = d3.pack()
-                .size([width * 0.9, height / 1.5])
+                .size([width * 0.9, height / 3 * 2])
                 .padding(function(d) { return padding[size]; });
 
             let packFalse = d3.pack()
@@ -305,14 +305,14 @@ export default {
                 candidate.tr = positionedCandidate.r || radius;
                 candidate.to = candidate.showFaces ? 1 : 0.2;
 
-                if (candidate.money && candidate.labels && candidate.tr < (width / 20)) {
+                if (candidate.money && candidate.labels && candidate.tr < (width / 18)) {
                     candidate.offsetLabel = true;
 
                     var dy = candidate.ty - (height / 3);
                     var dx = candidate.tx - (width / 2);
                     var theta = Math.atan2(dy, dx);
-                    candidate.offsetY = candidate.ty + Math.sin(theta) * 60;
-                    candidate.offsetX = candidate.tx + Math.cos(theta) * 60;
+                    candidate.offsetY = candidate.ty + Math.sin(theta) * (width * 0.08);
+                    candidate.offsetX = candidate.tx + Math.cos(theta) * (width * 0.08);
                 } else {
                     candidate.offsetLabel = false;
                 }
