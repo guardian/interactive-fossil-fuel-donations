@@ -311,7 +311,6 @@ export default {
                     var dy = candidate.ty - (height / 3);
                     var dx = candidate.tx - (width / 2);
                     var theta = Math.atan2(dy, dx);
-                    console.log(theta * (180 / Math.PI));
                     candidate.offsetY = candidate.ty + Math.sin(theta) * 60;
                     candidate.offsetX = candidate.tx + Math.cos(theta) * 60;
                 } else {
