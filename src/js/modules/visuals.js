@@ -49,17 +49,17 @@ export default {
         }.bind(this));
 
         $(window).resize(function() {
-            this.sortData();
             this.setupCanvas();
             this.setValues();
+            this.drawCandidates();
         }.bind(this));
     },
 
     setValues: function() {
-        padding = width * 0.007;
-        fontSize = width * 0.03;
-        moneyFontSize = width * 0.05;
-        radius = width * 0.07;
+        padding = Math.floor(width * 0.007);
+        fontSize = Math.floor(width * 0.03);
+        moneyFontSize = Math.floor(width * 0.05);
+        radius = Math.floor(width * 0.07);
     },
 
     sortData: function() {
@@ -71,7 +71,11 @@ export default {
     setupCanvas: function() {
         $('.uit-visuals canvas').remove();
         width = $('.uit-visuals').width();
-        height = $('.uit-visuals').height();
+        height = $('.uit-visuals').width() * 1.5;
+
+        function gcd (a, b) {
+          return (b == 0) ? a : gcd (b, a%b);
+        }
 
         const canvas = d3.select('.uit-visuals')
             .append('canvas')
