@@ -57,8 +57,8 @@ export default {
 
     setValues: function() {
         padding = Math.floor(width * 0.007);
-        fontSize = Math.floor(width * 0.03);
-        moneyFontSize = Math.floor(width * 0.05);
+        fontSize = Math.floor(width * 0.025);
+        moneyFontSize = Math.floor(width * 0.045);
         radius = Math.floor(width * 0.07);
     },
 
@@ -269,11 +269,11 @@ export default {
                 }
             }
 
-            this.animate(leaves);
+            this.animate(leaves, activeSlide);
         }
     },
 
-    animate: function(positionedData) {
+    animate: function(positionedData, activeSlide = null) {
         var newPositionedData = {};
 
         positionedData.forEach(function(candidate, i) {
@@ -298,14 +298,64 @@ export default {
                 candidate.tr = positionedCandidate.r || radius;
                 candidate.to = candidate.showFaces ? 1 : 0.2;
 
-                if (candidate.money && candidate.labels && candidate.tr < (width / 18)) {
+                if (candidate.money && candidate.labels && candidate.tr < (width / 17)) {
                     candidate.offsetLabel = true;
 
                     var dy = candidate.ty - (height / 3);
                     var dx = candidate.tx - (width / 2);
                     var theta = Math.atan2(dy, dx);
-                    candidate.offsetY = candidate.ty + Math.sin(theta) * (width * 0.08);
-                    candidate.offsetX = candidate.tx + Math.cos(theta) * (width * 0.08);
+                    candidate.offsetY = candidate.ty + Math.sin(theta) * (width * 0.09);
+                    candidate.offsetX = candidate.tx + Math.cos(theta) * (width * 0.09);
+
+                    if (activeSlide && activeSlide < 6) {
+                        if (candidate.candidate === 'Seth Moulton') {
+                            candidate.offsetY += width * 0.04;
+                            candidate.offsetX += width * 0.01;
+                        } else if (candidate.candidate === 'Pete Buttigieg') {
+                            candidate.offsetY += width * 0.05;
+                        } else if (candidate.candidate === 'Mike Gravel') {
+                            candidate.offsetY -= width * 0.05;
+                        } else if (candidate.candidate === 'Cory Booker') {
+                            candidate.offsetY += width * 0.04;
+                            candidate.offsetX += width * 0.05;
+                        } else if (candidate.candidate === 'Julian Castro') {
+                            candidate.offsetY -= width * 0.01;
+                            candidate.offsetX -= width * 0.04;
+                        } else if (candidate.candidate === 'John Delaney') {
+                            candidate.offsetY -= width * 0.04;
+                            candidate.offsetX += width * 0.01;
+                        } else if (candidate.candidate === 'Kamala Harris') {
+                            candidate.offsetX -= width * 0.03;
+                        } else if (candidate.candidate === 'Tulsi Gabbard') {
+                            candidate.offsetY += width * 0.03;
+                            candidate.offsetX += width * 0.05;
+                        } else if (candidate.candidate === 'Andrew Yang') {
+                            candidate.offsetY += width * 0.01;
+                            candidate.offsetX += width * 0.04;
+                        }
+                    } else if (activeSlide === 6) {
+                        if (candidate.candidate === 'Cory Booker') {
+                            candidate.offsetY += width * 0.01;
+                            candidate.offsetX += width * 0.05;
+                        } else if (candidate.candidate === 'Jay Inslee') {
+                            candidate.offsetY -= width * 0.02;
+                        } else if (candidate.candidate === 'Andrew Yang') {
+                            candidate.offsetY -= width * 0.02;
+                            candidate.offsetX -= width * 0.03;
+                        } else if (candidate.candidate === 'Julian Castro') {
+                            candidate.offsetY -= width * 0.03;
+                            candidate.offsetX -= width * 0.01;
+                        } else if (candidate.candidate === 'Mike Gravel') {
+                            candidate.offsetY += width * 0.04;
+                            candidate.offsetX -= width * 0.02;
+                        } else if (candidate.candidate === 'Pete Buttigieg') {
+                            candidate.offsetY += width * 0.03;
+                            candidate.offsetX += width * 0.03;
+                        } else if (candidate.candidate === 'John Delaney') {
+                            candidate.offsetY -= width * 0.03;
+                            candidate.offsetX -= width * 0.01;
+                        }
+                    }
                 } else {
                     candidate.offsetLabel = false;
                 }
@@ -419,6 +469,9 @@ export default {
         } else {
             var figureCount = number.toString().length;
 
+            if (figureCount >= 7) {
+                return '$' + Math.round(number / 1000000) + '.' + Math.round(number / 100000).toString().substr(1) + 'm';
+            }
             if (figureCount >= 4) {
                 return '$' + Math.round(number / 1000) + 'k';
             } else {
