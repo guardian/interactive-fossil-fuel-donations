@@ -93,6 +93,8 @@ export default {
         let activeSlide = parseInt($('.uit-visuals').attr('data-set'));
         let positions;
 
+        console.log(activeSlide);
+
         if (activeSlide === 0) {
             let levels = [];
                 levels.push({
@@ -129,7 +131,7 @@ export default {
             }
 
             this.animate(leaves);
-        } else if (activeSlide === 1) {
+        } else if (activeSlide === 1 || activeSlide === 2) {
             let levels = {};
 
             levels.true = [];
@@ -199,7 +201,7 @@ export default {
             });
 
             for (var i in data) {
-                if (activeSlide === 6) {
+                if (activeSlide === 7) {
                     const received = data[i].total ? 'true' : 'false';
                     levels[received].push({
                         id: data[i].candidate,
@@ -242,9 +244,9 @@ export default {
                 leaves = leaves.concat(packedFalse.leaves());
 
             var highlightedCandidates = {
-                3: ['Beto O\'Rourke'],
-                4: ['Michael Bennet'],
-                5: ['Kirsten Gillibrand']
+                4: ['Beto O\'Rourke'],
+                5: ['Michael Bennet'],
+                6: ['Kirsten Gillibrand', 'Bernie Sanders']
             }
 
             var activeSlidesHighlights = highlightedCandidates[activeSlide];
@@ -307,7 +309,7 @@ export default {
                     candidate.offsetY = candidate.ty + Math.sin(theta) * (width * 0.09);
                     candidate.offsetX = candidate.tx + Math.cos(theta) * (width * 0.09);
 
-                    if (activeSlide && activeSlide < 6) {
+                    if (activeSlide && activeSlide < 7) {
                         if (candidate.candidate === 'Seth Moulton') {
                             candidate.offsetY += width * 0.04;
                             candidate.offsetX += width * 0.01;
@@ -333,7 +335,7 @@ export default {
                             candidate.offsetY += width * 0.01;
                             candidate.offsetX += width * 0.04;
                         }
-                    } else if (activeSlide === 6) {
+                    } else if (activeSlide === 7) {
                         if (candidate.candidate === 'Cory Booker') {
                             candidate.offsetY += width * 0.01;
                             candidate.offsetX += width * 0.05;
