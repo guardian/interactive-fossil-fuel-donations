@@ -10,22 +10,10 @@ let width,
     imageCount = data.length,
     loadedCount = 0,
     size,
-    radius;
-
-const fontSize = {
-    mobile: 12,
-    desktop: 14
-}
-
-const moneySize = {
-    mobile: 20,
-    desktop: 24
-}
-
-const padding = {
-    mobile: 2,
-    desktop: 5
-}
+    radius,
+    padding,
+    fontSize,
+    moneyFontSize;
 
 export default {
     init: function() {
@@ -44,14 +32,13 @@ export default {
     },
 
     checkForAllImages: function() {
-        loadedCount++;1
+        loadedCount++;
 
         if (imageCount === loadedCount) {
             this.bindings();
-            this.checkForMobile();
             this.sortData();
             this.setupCanvas();
-            this.setRadius();
+            this.setValues();
             scroll.init();
         }
     },
@@ -62,15 +49,17 @@ export default {
         }.bind(this));
 
         $(window).resize(function() {
-            this.checkForMobile();
             this.sortData();
             this.setupCanvas();
-            this.setRadius();
+            this.setValues();
         }.bind(this));
     },
 
-    checkForMobile: function() {
-        size = $(window).width() < 980 ? 'mobile' : 'desktop';
+    setValues: function() {
+        padding = width * 0.007;
+        fontSize = width * 0.03;
+        moneyFontSize = width * 0.05;
+        radius = width * 0.07;
     },
 
     sortData: function() {
@@ -81,8 +70,8 @@ export default {
 
     setupCanvas: function() {
         $('.uit-visuals canvas').remove();
-        width = size === 'mobile' ? $(window).width() : $('.uit-visuals').width();
-        height = size === 'mobile' ? $(window).height() : $('.uit-visuals').height();
+        width = $('.uit-visuals').width();
+        height = $('.uit-visuals').height();
 
         const canvas = d3.select('.uit-visuals')
             .append('canvas')
@@ -125,7 +114,7 @@ export default {
             let pack = d3.pack()
                 .size([width, height])
                 .radius(function(d) { return radius })
-                .padding(function(d) { return padding[size] });
+                .padding(function(d) { return padding });
 
             const packed = pack(root);
             let leaves = packed.leaves();
@@ -175,7 +164,7 @@ export default {
             let pack = d3.pack()
                 .size([width, height / 1.5])
                 .radius(function(d) { return radius })
-                .padding(function(d) { return padding[size]; });
+                .padding(function(d) { return padding; });
 
             let packedTrue = pack(rootTrue);
             let packedFalse = pack(rootFalse);
@@ -235,12 +224,12 @@ export default {
 
             let packTrue = d3.pack()
                 .size([width * 0.9, height / 3 * 2])
-                .padding(function(d) { return padding[size]; });
+                .padding(function(d) { return padding; });
 
             let packFalse = d3.pack()
                 .size([width * 0.9, height / 3])
                 .radius(function(d) { return radius })
-                .padding(function(d) { return padding[size]; });
+                .padding(function(d) { return padding; });
 
             let packedTrue = packTrue(rootTrue);
             let packedFalse = packFalse(rootFalse);
@@ -406,14 +395,14 @@ export default {
 
             if (d.labels) {
                 ctx.fillStyle = d.offsetLabel ? '#222' : '#fff';
-                ctx.font = `${fontSize[size]}px Guardian Sans Web`;
+                ctx.font = `${fontSize}px Guardian Sans Web`;
                 ctx.textAlign = 'center';
-                ctx.fillText(d.surname, d.lx, d.ly + (fontSize[size] / 2) - (d.money ? fontSize[size] : 0) );
-            }
+                ctx.fillText(d.surname, d.lx, d.ly + (fontSize / 2) - (d.money ? fontSize : 0) );
 
-            if (d.labels && d.money) {
-                ctx.font = `${moneySize[size]}px Guardian Figures`;
-                ctx.fillText(this.formatMoney(d.total), d.lx, d.ly + (moneySize[size] / 1.5));
+                if (d.money) {
+                    ctx.font = `${moneyFontSize}px Guardian Figures`;
+                    ctx.fillText(this.formatMoney(d.total), d.lx, d.ly + (moneyFontSize / 1.5));
+                }
             }
         }.bind(this));
 
@@ -438,35 +427,5 @@ export default {
         if (string) {
             return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ /g, '-').replace('\'', '').toLowerCase();
         }
-    },
-
-    setRadius: function() {
-        let levels = [];
-            levels.push({
-                id: 'parent',
-                parentId: null
-            });
-
-        for (var i in data) {
-            levels.push({
-                id: data[i].candidate,
-                parentId: 'parent',
-                value: 1
-            });
-        }
-
-        let root = d3.stratify()
-            (levels)
-            .sum(function(d) { return d.value })
-            .sort(function(a, b) { return b.value - a.value });
-
-        let pack = d3.pack()
-            .size([width, height])
-            .padding(function(d) { return padding[size] });
-
-        const packed = pack(root);
-        let leaves = packed.leaves();
-
-        radius = leaves[0].r;
     }
 };
