@@ -19,17 +19,17 @@
         position: fixed;
         top: 0;
         bottom: 0;
-        width: calc(940px / 2);
+        width: calc(920px / 2);
         left: calc((100% - 940px) / 2);
     }
 
     @include mq(leftCol) {
-        width: calc(1100px / 2);
+        width: calc(1080px / 2);
         left: calc((100% - 1100px) / 2);
     }
 
     @include mq(wide) {
-        width: calc(1260px / 2);
+        width: calc(1240px / 2);
         left: calc((100% - 1260px) / 2);
     }
 

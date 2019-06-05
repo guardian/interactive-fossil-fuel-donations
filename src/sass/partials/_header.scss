@@ -1,12 +1,27 @@
 .uit-header {
     overflow: auto;
+
+    @include mq(desktop) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+}
+
+.uit-header__content {
+    @include mq(desktop) {
+        margin-top: -52px;
+        position: relative;
+        z-index: 20;
+    }
 }
 
 .uit-header__headline {
     padding: 6px 0;
     font-family: 'Guardian Egyptian Web';
     font-weight: 700;
-    font-size: 24px;
+    font-size: 32px;
     line-height: 1.1;
 
     @include mq(tablet) {

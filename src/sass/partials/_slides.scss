@@ -15,6 +15,12 @@
         font-size: 32px;
         padding: 51vh 0;
     }
+
+    &[data-slide="1"] {
+        @include mq(desktop) {
+            margin-top: -51vh;
+        }
+    }
 }
 
 .uit-slide__inner {
@@ -45,4 +51,14 @@
     font-size: 14px;
     color: $c-grey;
     padding-top: 6px;
+
+    a {
+        color: $c-grey;
+        border-bottom: 1px solid $c-grey;
+
+        &:hover {
+            color: $c-dark-grey;
+            text-decoration: none;
+        }
+    }
 }
