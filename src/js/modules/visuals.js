@@ -73,6 +73,11 @@ export default {
         width = $('.uit-visuals').width();
         height = $('.uit-visuals').width() * 1.5;
 
+        if (height > $(window).height()) {
+            height = $(window).height() - 30;
+            width = height * 0.6666;
+        }
+
         function gcd (a, b) {
           return (b == 0) ? a : gcd (b, a%b);
         }
