@@ -186,7 +186,7 @@ export default {
                     leaves[i].y += height / 3;
                 }
                 if (activeSlide === 2) {
-                    if (leaves[i].id !== 'Joe Biden' && leaves[i].id !== 'Kamala Harris' && leaves[i].id !== 'Bill De Blasio') {
+                    if (leaves[i].id !== 'Joe Biden' && leaves[i].id !== 'Bill De Blasio') {
                         leaves[i].blurred = true;
                     }
                 }
@@ -400,7 +400,7 @@ export default {
         }
 
         timer = d3.timer(function(elapsed) {
-            var t = Math.min(1, ease(elapsed / 800));
+            var t = Math.min(1, ease(elapsed / 600));
             data.forEach(function(candidate, i) {
                 candidate.x = candidate.sx * (1 - t) + candidate.tx * t;
                 candidate.y = candidate.sy * (1 - t) + candidate.ty * t;
