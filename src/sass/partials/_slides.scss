@@ -1,7 +1,7 @@
 .uit-slide {
     position: relative;
     z-index: 2;
-    padding: 51vh 0;
+    padding: 80vh 0 0;
     font-family: 'Guardian Egyptian Web';
     font-weight: 400;
     font-size: 18px;
@@ -13,6 +13,7 @@
 
     @include mq(desktop) {
         font-size: 32px;
+        padding: 51vh 0;
     }
 }
 
