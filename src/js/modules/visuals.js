@@ -93,8 +93,6 @@ export default {
         let activeSlide = parseInt($('.uit-visuals').attr('data-set'));
         let positions;
 
-        console.log(activeSlide);
-
         if (activeSlide === 0) {
             let levels = [];
                 levels.push({
@@ -181,6 +179,11 @@ export default {
             for (var i in leaves) {
                 if (leaves[i].data.parentId === 'false') {
                     leaves[i].y += height / 3;
+                }
+                if (activeSlide === 2) {
+                    if (leaves[i].id !== 'Joe Biden' && leaves[i].id !== 'Kamala Harris' && leaves[i].id !== 'Bill De Blasio') {
+                        leaves[i].blurred = true;
+                    }
                 }
                 leaves[i].labels = true;
             }
