@@ -170,23 +170,28 @@ export default {
                 .sum(function(d) { return d.value })
                 .sort(function(a, b) { return b.value - a.value });
 
-            let pack = d3.pack()
+            let packTrue = d3.pack()
                 .size([width, height / 1.5])
                 .radius(function(d) { return radius })
                 .padding(function(d) { return padding; });
 
-            let packedTrue = pack(rootTrue);
-            let packedFalse = pack(rootFalse);
+            let packFalse = d3.pack()
+                .size([width, height / 2])
+                .radius(function(d) { return radius })
+                .padding(function(d) { return padding; });
+
+            let packedTrue = packTrue(rootTrue);
+            let packedFalse = packFalse(rootFalse);
 
             let leaves = packedTrue.leaves();
                 leaves = leaves.concat(packedFalse.leaves());
 
             for (var i in leaves) {
                 if (leaves[i].data.parentId === 'false') {
-                    leaves[i].y += height / 3;
+                    leaves[i].y += height / 1.8;
                 }
                 if (activeSlide === 2) {
-                    if (leaves[i].id !== 'Joe Biden' && leaves[i].id !== 'Bill De Blasio') {
+                    if (leaves[i].id !== 'Joe Biden') {
                         leaves[i].blurred = true;
                     }
                 }
